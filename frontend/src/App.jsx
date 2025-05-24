@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Navigate, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -6,11 +6,28 @@ import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/useAuthStore";
+import { Loader } from "lucide-react";
+import Navbar from "./components/Navbar";
 
 function App() {
-  const authUser = false;
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth && !authUser) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin"></Loader>
+      </div>
+    );
+  }
+
   return (
     <div>
+      <Navbar />
       <Routes>
         <Route
           path="/"

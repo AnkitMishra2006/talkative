@@ -14,10 +14,10 @@ import toast from "react-hot-toast";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import axios from "axios";
-// import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore } from "../store/useAuthStore";
 
 const SignUpPage = () => {
-  // const {signup} = useAuthStore();
+  const { signup } = useAuthStore();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -39,18 +39,10 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const isValid = validateForm();
-      if (!isValid) return;
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/signup",
-        formData
-      );
-      console.log(response);
-      toast.success("Account created successfully");
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+
+    const success = validateForm();
+    if (success) {
+      signup(formData);
     }
   };
 
