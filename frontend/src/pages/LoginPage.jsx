@@ -1,36 +1,20 @@
 import { useState } from "react";
-
+import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
-import { useAuthStore } from "../store/useAuthStore";
 
 const LoginPage = () => {
-  const { login } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  const validateForm = () => {
-    if (!formData.email.trim()) return toast.error("Email is required");
-    if (!/\S+@\S+\.\S+/.test(formData.email))
-      return toast.error("Invalid email format");
-    if (!formData.password) return toast.error("Password is required");
-    if (formData.password.length < 6)
-      return toast.error("Password must be at least 6 characters");
-
-    return true;
-  };
+  const { login, isLoggingIn } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = validateForm();
-
-    if (success) {
-      login(formData);
-    }
+    login(formData);
   };
 
   return (
@@ -105,8 +89,19 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
-              Sign in
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 

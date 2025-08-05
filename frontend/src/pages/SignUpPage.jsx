@@ -1,6 +1,5 @@
-import React from "react";
 import { useState } from "react";
-
+import { useAuthStore } from "../store/useAuthStore";
 import {
   Eye,
   EyeOff,
@@ -10,20 +9,20 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
-import toast from "react-hot-toast";
-import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { useAuthStore } from "../store/useAuthStore";
+
+import AuthImagePattern from "../components/AuthImagePattern";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
-  const { signup } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
+
+  const { signup, isSigningUp } = useAuthStore();
 
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
@@ -37,13 +36,12 @@ const SignUpPage = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const success = validateForm();
-    if (success) {
-      signup(formData);
-    }
+
+    if (success === true) signup(formData);
   };
 
   return (
@@ -56,7 +54,7 @@ const SignUpPage = () => {
             <div className="flex flex-col items-center gap-2 group">
               <div
                 className="size-12 rounded-xl bg-primary/10 flex items-center justify-center 
-            group-hover:bg-primary/20 transition-colors"
+              group-hover:bg-primary/20 transition-colors"
               >
                 <MessageSquare className="size-6 text-primary" />
               </div>
@@ -139,8 +137,19 @@ const SignUpPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full">
-              Create Account
+            <button
+              type="submit"
+              className="btn btn-primary w-full"
+              disabled={isSigningUp}
+            >
+              {isSigningUp ? (
+                <>
+                  <Loader2 className="size-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 
@@ -164,5 +173,4 @@ const SignUpPage = () => {
     </div>
   );
 };
-
 export default SignUpPage;
